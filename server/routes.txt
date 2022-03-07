@@ -1,0 +1,227 @@
+//individual tiles
+
+  helpfulClick() {
+    if ( !this.state.helpful ) {
+      axios.put(`${this.props.apiUrl}/reviews/${this.props.review.review_id}/helpful`)
+        .then(() => {
+          console.log('helpful PUT success');
+          this.setState({
+            helpful: true,
+            helpfulCount: this.state.helpfulCount + 1
+          })
+        })
+        .catch((err) => {
+          console.log('API post /reviews/<review_id>/helpful failed with ', err);
+        })
+    }
+  }
+
+  reportClick() {
+    axios.put(`${this.props.apiUrl}/reviews/${this.props.review.review_id}/report`)
+        .then(() => {
+          console.log('report PUT success');
+        })
+        .catch((err) => {
+          console.log('API post /reviews/<review_id>/report failed with ', err);
+        })
+  }
+
+//new review
+axios({
+      method: 'post',
+      url: `${this.props.apiUrl}/reviews`,
+      data: {
+        product_id: this.props.productId,
+        rating: this.state.rating,
+        summary: this.state.summary,
+        body: this.state.body,
+        recommend: this.state.recommend,
+        name: this.state.name,
+        email: this.state.email,
+        photos: this.state.photos,
+        characteristics: this.state.characteristics
+      },
+      headers: {
+      //   'content-type': 'application/json',
+      //   Accept: 'application/json'
+        Authorization: this.props.token
+      }
+    })
+      .then((status) => {
+        console.log('form submission success: ', status);
+        this.setState({
+          showModal: false,
+          counter: 50,
+          rating: 0,
+          ratingHover: 0,
+          recommend: false,
+          characteristics: {},
+          summary: '',
+          body: '',
+          photos: [],
+          email: '',
+          name: ''
+        })
+      })
+      .catch((err) => {
+        console.log('New review POST failed: ', err);
+      })
+  }
+
+
+//ratings and reviews
+componentDidMount() {
+    axios.defaults.headers.common['Authorization'] = this.props.token;
+    axios.get(`${this.props.apiUrl}/reviews/?product_id=${this.props.currentProduct}&sort=${this.state.sorting}&count=${this.state.count}`)
+    .then((results) => {
+      if (results.data.results.length > this.state.count - 1) {
+        let limitResults = results.data.results;
+        limitResults.splice(this.state.count - 1);
+        this.setState({
+          showMore: true,
+          reviews: limitResults
+        })
+      } else {
+        this.setState({
+          showMore: false
+        })
+      }
+      return true;
+      // console.log('this.state.reviews: ', this.state.reviews);
+    })
+    .catch((err) => {
+      console.log('API get /reviews failed: ', err);
+    })
+
+    axios.get(`${this.props.apiUrl}/products/${this.props.currentProduct}`)
+    .then((result) => {
+      this.setState({
+        productName: result.data.name
+      })
+    })
+    .catch((err) => {
+      console.log(`API get /products/${this.props.currentProduct} failed: `, err);
+    })
+
+    axios.get(`${this.props.apiUrl}/reviews/meta/?product_id=${this.props.currentProduct}`)
+      .then((results) => {
+        this.setState({
+          meta: results.data
+        })
+        console.log('this.state.meta: ', this.state.meta);
+      })
+      .catch((err) => {
+        console.log('API get /reviews/meta failed: ', err);
+      })
+  }
+
+  changeSort(e) {
+    axios.get(`${this.props.apiUrl}/reviews/?product_id=${this.props.currentProduct}&sort=${e.target.value}&count=${this.state.count}`)
+      .then((results) => {
+        let limitResults = results.data.results.slice();
+        limitResults.splice(this.state.count - 1);
+        this.setState({
+          reviews: limitResults,
+          sorting: e.target.value
+        })
+      })
+      .catch((err) => {
+        console.log('API get /reviews failed: ', err);
+      })
+  }
+
+  moreReviews() {
+    this.setState({
+      count: this.state.count + 2
+    }, () => {
+      console.log(this.state.sorting)
+      axios.get(`${this.props.apiUrl}/reviews/?product_id=${this.props.currentProduct}&sort=${this.state.sorting}&count=${this.state.count}`)
+        .then((results) => {
+          let limitResults = results.data.results.slice();
+          limitResults.splice(this.state.count - 1);
+          this.setState({
+            reviews: limitResults
+          })
+          // console.log('this.state.reviews: ', this.state.reviews);
+          return results;
+        })
+        .then((results) => {
+          // console.log('get reviews results: ', results.data.results.length, 'count: ', this.state.count - 1)
+          if (results.data.results.length > this.state.count - 1) {
+            this.setState({
+              showMore: true
+            })
+          } else {
+            this.setState({
+              showMore: false
+            })
+          }
+        })
+        .catch((err) => {
+          console.log('API get /reviews failed: ', err);
+        })
+    });\
+
+
+
+//list of urls
+https://app-hrsei-api.herokuapp.com/api/fec2/hr-rpp/reviews/{review_id}/helpful line 5
+https://app-hrsei-api.herokuapp.com/api/fec2/hr-rpp/reviews/{review_id}/report line 20
+https://app-hrsei-api.herokuapp.com/api/fec2/hr-rpp/reviews line 32
+https://app-hrsei-api.herokuapp.com/api/fec2/hr-rpp/reviews/?product_id={currentProduct}&sort=${this.state.sorting}&count=${this.state.count} line 75
+https://app-hrsei-api.herokuapp.com/api/fec2/hr-rpp/products/{currentProduct} line 96
+https://app-hrsei-api.herokuapp.com/api/fec2/hr-rpp/reviews/meta/?product_id={currentProduct} line 106
+https://app-hrsei-api.herokuapp.com/api/fec2/hr-rpp/reviews/?product_id={currentProduct}&sort=${e.target.value}&count=${this.state.count}`) line 119
+https://app-hrsei-api.herokuapp.com/api/fec2/hr-rpp/reviews/?product_id={currentProduct}&sort=${this.state.sorting}&count=${this.state.count}`) line 138
+
+
+//routes coming from r&r
+
+/reviews/[review id]/helpful
+/reviews/[review id]/report
+/reviews/?product_id:
+/products/[product id]
+/reviews/meta/?product_id:
+/reviews/?product_id:&sort:&count:   X2
+
+//distilled from above:
+
+/reviews                                   vanilla review request
+/reviews/:review_id/(helpful?report)       review with id can go either helpful or report routes
+/reviews/?product_id(&sort&count)          review with product id can also have sort and count
+/reviews/meta/?product_id                  review with meta and product id
+/products/:product_id                      product with product id
+
+
+//visual
+: = routed to variable route
+? = value provided in route (or request body)
+
+/review           POST
+  ->:review_id
+    ->/helpful    PUT
+    ->/report     PUT
+  ->?product_id   GET
+    ->?sort
+    ->?count
+  ->meta          GET
+    ->?product_id
+
+/products
+  ->:product_id
+
+
+//route descriptions
+
+/review
+  ->:review_id
+    ->/helpful
+    ->/report
+  ->?product_id
+    ->?sort
+    ->?count
+  ->meta
+    ->?product_id
+
+/products
+  ->:product_id
