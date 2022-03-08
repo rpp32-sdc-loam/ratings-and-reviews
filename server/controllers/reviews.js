@@ -4,8 +4,14 @@ var {getProductReviews, getProductReviewMetadata, postReview, markReviewHelpful,
 
 }*/
 exports.getReviews = (req, res) => {
-  console.log('review get', req.query);
-  res.sendStatus(200)
+  getProductReviews({product_id: req.query.product_id}, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+    } else {
+      res.sendStatus(200);
+    }
+  });
 }
  //expecting page (int default 1) count (int default 5)
 //sort (string 'newest' 'helpful' 'relevant') product_id (integer of product to give reviews of)
