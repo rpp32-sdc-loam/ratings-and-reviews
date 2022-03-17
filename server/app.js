@@ -21,4 +21,18 @@ app.get('/product/:product_id', (req, res) => {
   res.send(200);
 })
 
+//verification for loaderio
+app.get('/loaderio-25f6cb3cdbf086e17d14c8e46db5cee4', (req, res) => {
+  var options = {
+    root: path.join(__dirname);
+  }
+
+  var fileName = 'loaderio.txt';
+  res.sendFile(fileName, options, err => {
+    if (err) {
+      console.log(err);
+    }
+  });
+})
+
 module.exports = app;
