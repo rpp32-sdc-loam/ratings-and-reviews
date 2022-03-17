@@ -10,6 +10,14 @@ describe('GET /reviews', () => {
       });
       expect(response.statusCode).toBe(200);
     })
+
+    test('should return an object', async () => {
+      const response = await request(app).get('/reviews').query({
+        product_id: 75
+      });
+      expect(typeof JSON.parse(response.res.text)).toBe('object');
+    })
+
   });
 
   describe('given specific values', () => {
@@ -17,7 +25,10 @@ describe('GET /reviews', () => {
   });
 
   describe('given no/missing values', () => {
-
+    test('should respond with a 500 status code', async () => {
+      const response = await request(app).get('/reviews');
+      expect(response.statusCode).toBe(500);
+    })
   });
 
 });

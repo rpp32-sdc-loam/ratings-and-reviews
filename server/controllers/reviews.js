@@ -9,7 +9,31 @@ exports.getReviews = (req, res) => {
       console.log(err);
       res.sendStatus(500);
     } else {
-      res.sendStatus(200);
+
+      var getRequestResultObject = {
+        product_id: req.query.product_id,
+        page: req.query.page,
+        count: req.query.count,
+        results: []
+      };
+
+      for (var photo in result.photos) {
+        for (var review in result.reviews) {
+          if (result.photos[photo].review_id === result.reviews[review].review_id) {
+            if (result.reviews[review].photos === undefined) {
+              result.reviews[review].photos = [];
+            }
+            result.reviews[review].photos.push({
+              url: result.photos[photo].url,
+              id: result.photos[photo].id,
+              review_id: result.photos[photo].review_id
+            })
+          }
+        }
+      }
+      getRequestResultObject.results = result.reviews;
+      //console.log(getRequestResultObject);
+      res.status(200).send(getRequestResultObject);
     }
   });
 }
@@ -19,6 +43,16 @@ exports.getReviews = (req, res) => {
 
 exports.getReviewsMeta = (req, res) => {
   console.log('review meta get', req.query);
+  var queryParams = {
+    product_id: req.query.product_id
+  }
+  getProductReviewMetadata(queryParams, (err, metaData) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(metaData);
+    }
+  })
   res.sendStatus(200)
 }
 //expecting product_id
