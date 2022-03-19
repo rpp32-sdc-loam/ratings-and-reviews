@@ -4,3 +4,4 @@ node_modules
 dumpfolder
 ratingsReviews.sql
 .DS_store
+coverage
