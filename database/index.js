@@ -5,8 +5,8 @@ const pool = new Pool({
   /*host: 'localhost',
   database: 'ratingsReviews',/** */
   password: 'wlessley',
-  hostname: 'ec2-44-202-247-165.compute-1.amazonaws.com',
-  database: "review",/**/
+  host: 'ec2-44-202-247-165.compute-1.amazonaws.com',
+  database: 'review',
   port:5432
 })
 
@@ -39,7 +39,7 @@ exports.getProductReviews = (params, callback) => {//return all reviews for the 
   pool.query(`select * from reviews where product_id=${params.product_id} and reported=false ${sortString} limit ${params.count} offset ${params.page * params.count} rows`)
     .then(reviews => {
       let testDate = new Date(reviews.rows[0].date);
-      console.log(reviews.rows[0].date);
+      //console.log(reviews.rows[0].date);
       var ids = '(';
       for (var row in reviews.rows) {
         ids += reviews.rows[row].review_id.toString() + ',' ;

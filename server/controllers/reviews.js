@@ -88,6 +88,18 @@ review post {
   photos: [],
   characteristics: { '216798': 1, '216799': 1, '216800': 1, '216801': 1 }
 }
+
+review post {
+  product_id: 64620,
+  rating: 5,
+  summary: 'test',
+  body: 'test text to test texting test of testing text test',
+  recommend: true,
+  name: 'test',
+  email: 't@t.com',
+  photos: [],
+  characteristics: { '216798': 1, '216799': 1, '216800': 1, '216801': 1 }
+}
 */
 
 
