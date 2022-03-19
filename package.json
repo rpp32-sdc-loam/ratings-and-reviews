@@ -6,6 +6,7 @@
     "test-coverage": "jest --coverage"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.2",
     "jest": "^27.5.1",
     "mongodb": "^4.3.1",
